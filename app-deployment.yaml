@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: ../kompose convert
+    kompose.version: 1.22.0 (955b78124)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: app
+  name: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: ../kompose convert
+        kompose.version: 1.22.0 (955b78124)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/bridge: "true"
+        io.kompose.service: app
+    spec:
+      containers:
+        - env:
+            - name: MAYAN_CELERY_BROKER_URL
+              value: redis://:mayanredispassword@redis:6379/0
+            - name: MAYAN_CELERY_RESULT_BACKEND
+              value: redis://:mayanredispassword@redis:6379/1
+            - name: MAYAN_DATABASES
+              value: '{''default'':{''ENGINE'':''django.db.backends.postgresql'',''NAME'':''mayan'',''PASSWORD'':''mayandbpass'',''USER'':''mayan'',''HOST'':''postgresql''}}'
+            - name: MAYAN_DOCKER_WAIT
+              value: postgresql:5432 redis:6379
+          image: mayanedms/mayanedms:3
+          name: app
+          ports:
+            - containerPort: 8000
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/mayan
+              name: app
+      restartPolicy: Always
+      volumes:
+        - name: app
+          persistentVolumeClaim:
+            claimName: app
+status: {}

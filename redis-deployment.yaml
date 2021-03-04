@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: ../kompose convert
+    kompose.version: 1.22.0 (955b78124)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: redis
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: redis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: ../kompose convert
+        kompose.version: 1.22.0 (955b78124)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/bridge: "true"
+        io.kompose.service: redis
+    spec:
+      containers:
+        - args:
+            - redis-server
+            - --appendonly
+            - "no"
+            - --databases
+            - "2"
+            - --maxmemory
+            - 100mb
+            - --maxclients
+            - "500"
+            - --maxmemory-policy
+            - allkeys-lru
+            - --save
+            - ""
+            - --tcp-backlog
+            - "256"
+            - --requirepass
+            - mayanredispassword
+          image: redis:5.0-alpine
+          name: redis
+          resources: {}
+          volumeMounts:
+            - mountPath: /data
+              name: redis
+      restartPolicy: Always
+      volumes:
+        - name: redis
+          persistentVolumeClaim:
+            claimName: redis
+status: {}
