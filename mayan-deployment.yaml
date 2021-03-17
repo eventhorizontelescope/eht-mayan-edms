@@ -36,6 +36,23 @@ spec:
     spec:
       containers:
       - name: mayan
+        env:
+          - name: MAYAN_REDIS_PASSWORD
+            valueFrom:
+              fieldRef: 
+                fieldPath: projects/eht-cloud/secrets/MAYAN_REDIS_PASSWORD
+          - name: MAYAN_CELERY_BROKER_URL
+            value: redis://:$MAYAN_REDIS_PASSWORD@redis:6379/0
+          - name: MAYAN_CELERY_RESULT_BACKEND
+            value: redis://:$MAYAN_REDIS_PASSWORD@redis:6379/1
+          - name: MAYAN_DATABASE_USER
+            value: mayan
+          - name: MAYAN_DATABASE_PASSWORD
+            valueFrom:
+              fieldRef:
+                fieldPath: projects/eht-cloud/secrets/MAYAN_DATABASE_PASSWORD/versions/1
+          - name: MAYAN_DATABASES
+            value: "{'default':{'ENGINE':'django.db.backends.postgresql','NAME':'mayan','PASSWORD':'${MAYAN_DATABASE_PASSWORD}','USER':'${MAYAN_DATABASE_USER}','HOST':'postgresql'}}"
         image: mayanedms/mayanedms:3
         resources:
           limits:

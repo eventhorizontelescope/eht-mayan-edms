@@ -1,17 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: ../kompose convert
-    kompose.version: 1.22.0 (955b78124)
   labels:
-    io.kompose.service: redis
+    service: redis
   name: redis
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: redis
+      service: redis
   strategy:
     type: Recreate
   template:
@@ -24,7 +21,12 @@ spec:
         io.kompose.service: redis
     spec:
       containers:
-        - args:
+        - env:
+            - name: MAYAN_REDIS_PASSWORD
+              valueFrom:
+                fieldRef:
+                  fieldPath: projects/eht-cloud/secrets/MAYAN_REDIS_PASSWORD
+          args:
             - redis-server
             - --appendonly
             - "no"
@@ -41,7 +43,7 @@ spec:
             - --tcp-backlog
             - "256"
             - --requirepass
-            - mayanredispassword
+            - $MAYAN_REDIS_PASSWORD
           image: redis:5.0-alpine
           name: redis
           resources: {}
@@ -66,5 +68,5 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 100Mi
+      storage: 1Gi
 status: {}
