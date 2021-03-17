@@ -4,7 +4,6 @@ metadata:
   annotations:
     kompose.cmd: ../kompose convert
     kompose.version: 1.22.0 (955b78124)
-  creationTimestamp: null
   labels:
     io.kompose.service: postgresql
   name: postgresql
@@ -20,7 +19,6 @@ spec:
       annotations:
         kompose.cmd: ../kompose convert
         kompose.version: 1.22.0 (955b78124)
-      creationTimestamp: null
       labels:
         io.kompose.network/bridge: "true"
         io.kompose.service: postgresql
@@ -44,4 +42,18 @@ spec:
         - name: postgres
           persistentVolumeClaim:
             claimName: postgres
+status: {}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    io.kompose.service: postgres
+  name: postgres
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
 status: {}
