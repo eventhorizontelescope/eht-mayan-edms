@@ -13,19 +13,17 @@ spec:
     type: Recreate
   template:
     metadata:
-      annotations:
-        kompose.cmd: ../kompose convert
-        kompose.version: 1.22.0 (955b78124)
       labels:
-        io.kompose.network/bridge: "true"
-        io.kompose.service: redis
+        network/bridge: "true"
+        service: redis
     spec:
       containers:
         - env:
             - name: MAYAN_REDIS_PASSWORD
               valueFrom:
-                fieldRef:
-                  fieldPath: projects/eht-cloud/secrets/MAYAN_REDIS_PASSWORD
+                secretKeyRef:
+                  name: mayan-database-info
+                  key: MAYAN_REDIS_PASSWORD
           args:
             - redis-server
             - --appendonly
@@ -61,7 +59,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   labels:
-    io.kompose.service: redis
+    service: redis
   name: redis
 spec:
   accessModes:

@@ -21,8 +21,9 @@ spec:
               value: mayan
             - name: POSTGRES_PASSWORD
               valueFrom:
-                fieldRef:
-                  fieldPath: projects/eht-cloud/secrets/MAYAN_DATABASE_PASSWORD/versions/1
+                secretKeyRef:
+                  name: mayan-database-info
+                  key: MAYAN_DATABASE_PASSWORD
             - name: POSTGRES_USER
               value: mayan
           image: postgres:9.6-alpine
