@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgresql
+  labels:
+    app: mayan
 spec:
   replicas: 1
   selector:
@@ -14,6 +16,7 @@ spec:
       labels:
         network/bridge: "true"
         service: postgresql
+        app: mayan
     spec:
       containers:
         - env:
