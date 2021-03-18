@@ -1,22 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mayan-postgresql
+spec:
+  selector:
+    app: mayan-postgres
+  ports:
+  - port: 5432
+    targetPort: 5432
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgresql
   labels:
-    app: mayan
+    app: postgres
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: postgresql
+      service: mayan-postgresql
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        network/bridge: "true"
-        service: postgresql
-        app: mayan
+        service: mayan-postgresql
+        app: mayan-postgres
     spec:
       containers:
         - env:
