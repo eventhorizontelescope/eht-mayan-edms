@@ -14,7 +14,7 @@ kind: Deployment
 metadata:
   name: postgresql
   labels:
-    app: postgres
+    app: mayan-postgres
 spec:
   replicas: 1
   selector:
