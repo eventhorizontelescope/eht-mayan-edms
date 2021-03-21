@@ -13,17 +13,17 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mayan-deployment
+  name: mayan
   labels:
-    app: mayan
+    service: mayan
 spec:
   selector:
     matchLabels:
-      app: mayan
+      service: mayan
   template:
     metadata:
       labels:
-        app: mayan
+        service: mayan
     spec:
       containers:
       - name: mayan
@@ -64,10 +64,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mayan-service
+  name: mayan
+  labels:
+    service: mayan
 spec:
-  selector:
-    app: mayan
   ports:
-  - port: 80
-    targetPort: 8000
+    - name: "80"
+      port: 80
+      targetPort: 8000
+  selector:
+    service: mayan
