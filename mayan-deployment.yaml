@@ -1,15 +1,4 @@
 apiVersion: v1
-kind: Service
-metadata:
-  name: mayan-service
-spec:
-  selector:
-    app: mayan
-  ports:
-  - port: 80
-    targetPort: 8000
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mayan
@@ -71,3 +60,14 @@ spec:
         - name: mayan
           persistentVolumeClaim:
             claimName: mayan
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mayan-service
+spec:
+  selector:
+    app: mayan
+  ports:
+  - port: 80
+    targetPort: 8000
