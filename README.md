@@ -10,3 +10,5 @@ This repo is the deployment repo for the EHT instance of [MAYAN-EDMS](https://ma
     	    -f postgresql.yaml \
     	    -f mayan.yaml      \
     	    -f revsys.yaml
+
+For a production deployment, the system admin should change the `password` fields in both "mb-secret.yaml" and "db-secret.yaml", and make sure that these passwords are not published to the internet.
