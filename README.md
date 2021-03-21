@@ -6,4 +6,5 @@ This repo is the deployment repo for the EHT instance of MAYAN-EDMS](https://may
 	    -f bridge-networkpolicy.yaml \
     	    -f mb-secret.yaml            \
 	    -f redis.yaml                \
-	    -f db-secret.yaml
+	    -f db-secret.yaml            \
+	    -f postgresql.yaml
