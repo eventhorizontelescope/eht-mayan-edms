@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   labels:
-    service: redis-service
+    service: redis
   name: redis
 spec:
   accessModes:
@@ -16,19 +16,19 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    service: redis-service
-  name: redis-service
+    service: redis
+  name: redis
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: redis-service
+      service: redis
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        service: redis-service
+        service: redis
     spec:
       containers:
         - env:
@@ -66,4 +66,18 @@ spec:
         - name: redis
           persistentVolumeClaim:
             claimName: redis
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    service: redis
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6379
+  selector:
+    service: redis
 status: {}
