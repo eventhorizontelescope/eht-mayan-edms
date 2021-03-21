@@ -1,7 +1,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres
+  name: postgresql
+  labels:
+    service: postgresql
 spec:
   accessModes:
     - ReadWriteOnce
@@ -15,19 +17,18 @@ kind: Deployment
 metadata:
   name: postgresql
   labels:
-    app: mayan-postgres
+    service: postgresql
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: mayan-postgresql
+      service: postgresql
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        service: mayan-postgresql
-        app: mayan-postgres
+        service: postgresql
     spec:
       containers:
         - env:
@@ -48,18 +49,20 @@ spec:
               name: postgres
       restartPolicy: Always
       volumes:
-        - name: postgres
+        - name: postgresql
           persistentVolumeClaim:
-            claimName: postgres
+            claimName: postgresql
 status: {}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mayan-postgresql
+  name: postgresql
+  labels:
+    service: postgresql
 spec:
-  selector:
-    app: mayan-postgres
   ports:
-  - port: 5432
-    targetPort: 5432
+    - port: 5432
+      targetPort: 5432
+  selector:
+    service: postgresql
