@@ -35,8 +35,8 @@ spec:
             - name: MAYAN_REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mayan-database-info
-                  key: MAYAN_REDIS_PASSWORD
+                  name: mb-secret
+                  key: password
           args:
             - redis-server
             - --appendonly
