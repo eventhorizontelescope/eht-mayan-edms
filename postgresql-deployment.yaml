@@ -34,19 +34,19 @@ spec:
         - env:
             - name: POSTGRES_DB
               value: mayan
+            - name: POSTGRES_USER
+              value: mayan
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mayan-database-info
-                  key: MAYAN_DATABASE_PASSWORD
-            - name: POSTGRES_USER
-              value: mayan
+                  name: db-secret
+                  key: password
           image: postgres:9.6-alpine
           name: postgresql
           resources: {}
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: postgres
+              name: postgresql
       restartPolicy: Always
       volumes:
         - name: postgresql

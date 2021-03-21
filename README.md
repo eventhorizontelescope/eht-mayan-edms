@@ -5,4 +5,5 @@ This repo is the deployment repo for the EHT instance of MAYAN-EDMS](https://may
     kubectl apply                        \
 	    -f bridge-networkpolicy.yaml \
     	    -f mb-secret.yaml            \
-	    -f redis.yaml
+	    -f redis.yaml                \
+	    -f db-secret.yaml
