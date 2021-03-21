@@ -10,7 +10,6 @@ spec:
   resources:
     requests:
       storage: 1Gi
-status: {}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -52,7 +51,6 @@ spec:
         - name: postgresql
           persistentVolumeClaim:
             claimName: postgresql
-status: {}
 ---
 apiVersion: v1
 kind: Service
