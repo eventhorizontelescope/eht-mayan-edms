@@ -7,4 +7,5 @@ This repo is the deployment repo for the EHT instance of MAYAN-EDMS](https://may
     	    -f mb-secret.yaml            \
 	    -f redis.yaml                \
 	    -f db-secret.yaml            \
-	    -f postgresql.yaml
+	    -f postgresql.yaml           \
+	    -f mayan.yaml
