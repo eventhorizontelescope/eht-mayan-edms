@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgresql
+  labels:
+    service: postgresql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresql
+  labels:
+    service: postgresql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: postgresql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        service: postgresql
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_DB
+              value: mayan
+            - name: POSTGRES_USER
+              value: mayan
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: password
+          image: postgres:9.6-alpine
+          name: postgresql
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/postgresql
+              name: postgresql
+      restartPolicy: Always
+      volumes:
+        - name: postgresql
+          persistentVolumeClaim:
+            claimName: postgresql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql
+  labels:
+    service: postgresql
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+  selector:
+    service: postgresql

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: revsys
+spec:
+  selector:
+    service: mayan
+  ports:
+    - port: 8000
+      targetPort: 8000
+  externalTrafficPolicy: Cluster
+  type: LoadBalancer

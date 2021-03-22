@@ -1,0 +1,82 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mayan
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mayan
+  labels:
+    service: mayan
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: mayan
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        service: mayan
+    spec:
+      containers:
+        - name: mayan
+          env:
+            - name: MAYAN_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mb-secret
+                  key: password
+            - name: MAYAN_DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: password
+            - name: MAYAN_CELERY_BROKER_URL
+              value: redis://:$MAYAN_REDIS_PASSWORD@redis:6379/0
+            - name: MAYAN_CELERY_RESULT_BACKEND
+              value: redis://:$MAYAN_REDIS_PASSWORD@redis:6379/1
+            - name: MAYAN_DATABASE_USER
+              value: mayan
+            - name: MAYAN_DATABASES
+              value: "{'default':{'ENGINE':'django.db.backends.postgresql','NAME':'mayan','PASSWORD':'$(MAYAN_DATABASE_PASSWORD)','USER':'$(MAYAN_DATABASE_USER)','HOST':'postgresql'}}"
+            - name: MAYAN_DOCKER_WAIT
+              value: postgresql:5432 redis:6379
+          image: mayanedms/mayanedms:3
+          resources:
+            limits:
+              memory: "1024Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - mountPath: /var/lib/mayan
+              name: mayan
+      restartPolicy: Always
+      volumes:
+        - name: mayan
+          persistentVolumeClaim:
+            claimName: mayan
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mayan
+  labels:
+    service: mayan
+spec:
+  ports:
+    - name: "80"
+      port: 80
+      targetPort: 8000
+  selector:
+    service: mayan

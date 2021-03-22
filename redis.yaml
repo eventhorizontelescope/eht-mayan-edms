@@ -1,28 +1,41 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis
+  labels:
+    service: redis
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    service: redis-service
-  name: redis-service
+    service: redis
+  name: redis
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: redis-service
+      service: redis
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        service: redis-service
+        service: redis
     spec:
       containers:
         - env:
             - name: MAYAN_REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mayan-database-info
-                  key: MAYAN_REDIS_PASSWORD
+                  name: mb-secret
+                  key: password
           args:
             - redis-server
             - --appendonly
@@ -52,18 +65,16 @@ spec:
         - name: redis
           persistentVolumeClaim:
             claimName: redis
-status: {}
 ---
 apiVersion: v1
-kind: PersistentVolumeClaim
+kind: Service
 metadata:
-  labels:
-    service: redis-service
   name: redis
+  labels:
+    service: redis
 spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-status: {}
+  ports:
+    - port: 6379
+      targetPort: 6379
+  selector:
+    service: redis
